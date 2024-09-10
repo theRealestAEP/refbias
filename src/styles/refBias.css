@@ -65,7 +65,7 @@
 
 .favorable-refs {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
     margin-bottom: 30px;
 }
@@ -75,6 +75,7 @@
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
 }
 
 .favorable-refs h3 {
@@ -174,4 +175,49 @@ h2 {
     padding: 15px;
     margin-bottom: 20px;
     font-style: italic;
+}
+
+.team-section {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.ref-bias-table {
+    width: 100%;
+    min-width: 250px;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 0.9em;
+}
+
+.ref-bias-table th,
+.ref-bias-table td {
+    border: 1px solid #dee2e6;
+    padding: 8px;
+    text-align: left;
+}
+
+.ref-bias-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.ref-bias-table .favorable {
+    color: #28a745;
+}
+
+.ref-bias-table .unfavorable {
+    color: #dc3545;
+}
+
+.ref-bias-table .totals-row {
+    font-weight: bold;
+    background-color: #e9ecef;
+}
+
+.ref-bias-table .totals-row td {
+    border-top: 2px solid #dee2e6;
 }
