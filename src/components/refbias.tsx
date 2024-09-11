@@ -133,7 +133,7 @@ const RefBias: React.FC = () => {
     }, [defaultYears]);
 
     useEffect(() => {
-        console.log('Updated teamBias:', teamBias);
+        // console.log('Updated teamBias:', teamBias);
     }, [teamBias]);
     
     const getShortTeamName = (fullName: string): string => {
@@ -204,14 +204,14 @@ const RefBias: React.FC = () => {
 
                 // Add win-loss data from winLossStats
                 const refKey = refName.toLowerCase().replace(/\s+/g, '-');
-                console.log('Looking for ref key:', refKey);
+                // console.log('Looking for ref key:', refKey);
                 const refWinLossData = (winLossStats as WinLossStats)[refKey];
-                console.log('Test:\n', winLossStats['adrian-hill']);
-                console.log('Test2:\n', refWinLossData);
+                // console.log('Test:\n', winLossStats['adrian-hill']);
+                // console.log('Test2:\n', refWinLossData);
                 // console.log('Test:\n', refWinLossData["adrian-hill"]);
                 // console.log('Ref win-loss data:', refWinLossData);
                 if (refWinLossData) {
-                    console.log('Found win-loss data for', refName);
+                    // console.log('Found win-loss data for', refName);
                     if (refWinLossData[season.year.toString()]) {
                         const yearWinLossData = refWinLossData[season.year.toString()].teamStats;
                         Object.keys(yearBias).forEach(team => {
@@ -223,24 +223,24 @@ const RefBias: React.FC = () => {
                                     losses: yearWinLossData[longTeamName].losses,
                                     ties: yearWinLossData[longTeamName].ties
                                 };
-                                console.log(`Updated ${refName} ${season.year} ${team}: W:${yearBias[team].teamStats.wins} L:${yearBias[team].teamStats.losses} T:${yearBias[team].teamStats.ties}`);
+                                // console.log(`Updated ${refName} ${season.year} ${team}: W:${yearBias[team].teamStats.wins} L:${yearBias[team].teamStats.losses} T:${yearBias[team].teamStats.ties}`);
                             } else {
-                                console.log(`No win-loss data for ${refName} ${season.year} ${longTeamName}`);
+                                // console.log(`No win-loss data for ${refName} ${season.year} ${longTeamName}`);
                             }
                         });
                     } else {
-                        console.log('No data for', refName, 'in year', season.year);
+                        // console.log('No data for', refName, 'in year', season.year);
                     }
                 } else {
-                    console.log('No win-loss data found for', refName);
+                    // console.log('No win-loss data found for', refName);
                 }
 
-                console.log(`Processed bias for ${refName} in ${season.year}:`, yearBias);
+                // console.log(`Processed bias for ${refName} in ${season.year}:`, yearBias);
                 bias[refName][season.year] = yearBias;
             });
         });
 
-        console.log('Final calculated bias:', bias);
+        // console.log('Final calculated bias:', bias);
         setTeamBias(bias);
     };
 
@@ -360,11 +360,37 @@ const RefBias: React.FC = () => {
         return Array.from(teams).sort();
     }, [refData]);
 
-    console.log('Referee names in refereeStats:', Object.keys(refereeStats));
-    console.log('Referee names in winLossStats:', Object.keys(winLossStats));
+
+    // "adrian-hill": {
+    //     "2021": {
+    //       "games": [
+    //         {
+    //           "homeTeam": "Cincinnati Bengals",
+    //           "awayTeam": "Minnesota Vikings",
+    //           "date": "09/12/2021",
+    //           "week": "1",
+    //           "winner": "Cincinnati Bengals",
+    //           "loser": "Minnesota Vikings",
+    //           "penaltyLog": [
+    //             {
+    //               "penalty": "False Start",
+    //               "team": "Minnesota",
+    //               "player": "C.Ham",
+    //               "quarter": "1",
+    //               "time": "15:00"
+    //             },
+    //             {
+    //               "penalty": "False Start",
+    //               "team": "Minnesota",
+    //               "player": "T.Conklin",
+    //               "quarter": "1",
+    //               "time": "14:25"
+    //             },
+    // console.log('Referee names in refereeStats:', Object.keys(refereeStats));
+    // console.log('Referee names in winLossStats:', Object.keys(winLossStats));
 
     useEffect(() => {
-        console.log('Referee data:', refData);
+        // console.log('Referee data:', refData);
     }, [refData]);
 
     return (
