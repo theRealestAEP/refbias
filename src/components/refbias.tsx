@@ -82,16 +82,15 @@ const RefBias: React.FC = () => {
     const [selectedYears, setSelectedYears] = useState<{ [ref: string]: string }>({});
 
     const teamNameMapping: { [key: string]: string } = {
-        "Washington": "Washington Football Team",
+        "Washington": "Washington Commanders",
         "Cincinnati": "Cincinnati Bengals",
         "Minnesota": "Minnesota Vikings",
         "Seattle": "Seattle Seahawks",
         "Las Vegas": "Las Vegas Raiders",
         "Denver": "Denver Broncos",
         "Tampa Bay": "Tampa Bay Buccaneers",
-        "New York": "New York Giants",
+        "N.Y. Giants": "New York Giants",
         "New York Jets": "New York Jets",
-        "New York Giants": "New York Giants",
         "San Francisco": "San Francisco 49ers",
         "Kansas City": "Kansas City Chiefs",
         "Baltimore": "Baltimore Ravens",
@@ -108,7 +107,14 @@ const RefBias: React.FC = () => {
         "Jacksonville": "Jacksonville Jaguars",
         "Tennessee": "Tennessee Titans",
         "Arizona": "Arizona Cardinals",
-        "Los Angeles": "Los Angeles Rams",
+        "LA Rams": "Los Angeles Rams",
+        "LA Chargers": "Los Angeles Chargers",
+        "New Orleans": "New Orleans Saints",
+        "Chicago": "Chicago Bears",
+        "New England": "New England Patriots",
+        "Green Bay": "Green Bay Packers",
+        "Houston": "Houston Texans",
+        "N.Y. Jets": "New York Jets",
         // Add more mappings as needed
     };
 
@@ -181,8 +187,19 @@ const RefBias: React.FC = () => {
 
                 // Calculate bias ratio and store total penalties
                 Object.keys(yearBias).forEach(team => {
-                    const avgPenalties = yearBias[team].totalPenalties / teamGames[team];
+                    const refKey = refName.toLowerCase().replace(/\s+/g, '-');
+                    const refWinLossData = (winLossStats as WinLossStats)[refKey];
+                    const yearWinLossData = refWinLossData?.[season.year.toString()]?.teamStats;
+                    const longTeamName = teamNameMapping[team] || team;
+                    const teamWinLossData = yearWinLossData?.[longTeamName];
+
+                    const totalGames = teamWinLossData ? 
+                        (teamWinLossData.wins + teamWinLossData.losses + (teamWinLossData.ties || 0)) || 1 : 
+                        1;
+
+                    const avgPenalties = yearBias[team].totalPenalties / totalGames;
                     yearBias[team].biasRatio = avgPenalties / leagueAverages[season.year];
+                    yearBias[team].totalGames = totalGames;
                 });
 
                 // Add win-loss data from winLossStats
@@ -441,12 +458,6 @@ const RefBias: React.FC = () => {
                                                 <td>{`${yearData.wins}-${yearData.losses}${yearData.ties?.toString() ? `-${yearData.ties}` : ''}`}</td>
                                             </tr>
                                         ))}
-                                        <tr className="totals-row">
-                                            <td>Totals</td>
-                                            <td>-</td>
-                                            <td>{ref.yearlyBias.reduce((sum, year) => sum + year.totalPenalties, 0)}</td>
-                                            <td>{`${ref.yearlyBias.reduce((sum, year) => sum + year.wins, 0)}-${ref.yearlyBias.reduce((sum, year) => sum + year.losses, 0)}${ref.yearlyBias.some(year => year.ties) ? `-${ref.yearlyBias.reduce((sum, year) => sum + (year.ties || 0), 0)}` : ''}`}</td>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
