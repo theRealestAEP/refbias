@@ -123,11 +123,10 @@ h2 {
 }
 
 .ref-bias-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: block; /* Change from flex to block */
     padding: 8px 0;
     border-bottom: 1px solid #e9ecef;
+    margin-bottom: 20px; /* Add some space between items */
 }
 
 .ref-bias-item:last-child {
@@ -183,11 +182,12 @@ h2 {
     padding: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
+    width: 100%; /* Ensure full width */
 }
 
 .ref-bias-table {
     width: 100%;
-    min-width: 250px;
+    min-width: unset; /* Remove min-width constraint */
     border-collapse: collapse;
     margin-top: 10px;
     font-size: 0.9em;
@@ -220,4 +220,33 @@ h2 {
 
 .ref-bias-table .totals-row td {
     border-top: 2px solid #dee2e6;
+}
+
+.penalty-grid {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 20px; /* Add space below the grid */
+    border-collapse: collapse;
+}
+
+.penalty-grid th, .penalty-grid td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.penalty-grid th {
+    background-color: #f2f2f2;
+}
+
+/* Add responsive design for smaller screens */
+@media (max-width: 768px) {
+    .ref-bias-table, .penalty-grid {
+        font-size: 0.8em;
+    }
+
+    .ref-bias-table th, .ref-bias-table td,
+    .penalty-grid th, .penalty-grid td {
+        padding: 6px;
+    }
 }

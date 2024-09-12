@@ -31,6 +31,7 @@ interface Game {
     penaltiesDeclined: number;
     penaltiesOffsetting: number;
     winner?: string;
+    loser?: string;
 }
 
 interface TeamBias {
@@ -71,6 +72,14 @@ interface WinLossStats {
     }
 }
 
+interface Penalty {
+    penalty: string;
+    team: string;
+    player: string;
+    quarter: string;
+    time: string;
+}
+
 const RefBias: React.FC = () => {
     const [refData, setRefData] = useState<{ [key: string]: RefStats[] }>({});
     const [teamBias, setTeamBias] = useState<TeamBias>({});
@@ -80,6 +89,7 @@ const RefBias: React.FC = () => {
     const [teamTotalStats, setTeamTotalStats] = useState<{ [team: string]: TeamTotalStats }>({});
     const [defaultYears, setDefaultYears] = useState<{ [ref: string]: string }>({});
     const [selectedYears, setSelectedYears] = useState<{ [ref: string]: string }>({});
+    const [penaltyData, setPenaltyData] = useState<{ [refName: string]: { [year: string]: { games: { homeTeam: string; awayTeam: string; penaltyLog: Penalty[] }[] } } }>({});
 
     const teamNameMapping: { [key: string]: string } = {
         "Washington": "Washington Commanders",
@@ -118,14 +128,13 @@ const RefBias: React.FC = () => {
         // Add more mappings as needed
     };
 
-
-
     useEffect(() => {
         setRefData(refereeStats as { [key: string]: RefStats[] });
         calculateTeamBias();
         calculateHomeAwayAdvantage();
         calculateTeamTotalStats();
         setDefaultYearsForRefs();
+        setPenaltyData(winLossStats as any); // Corrected data source
     }, []);
 
     useEffect(() => {
@@ -135,15 +144,15 @@ const RefBias: React.FC = () => {
     useEffect(() => {
         // console.log('Updated teamBias:', teamBias);
     }, [teamBias]);
-    
+
     const getShortTeamName = (fullName: string): string => {
         for (const [short, full] of Object.entries(teamNameMapping)) {
-          if (fullName.includes(full)) {
-            return short;
-          }
+            if (fullName.includes(full)) {
+                return short;
+            }
         }
         return fullName.split(' ').pop() || fullName; // Return last word of team name or full name if no space
-      };
+    };
 
     const calculateTeamBias = () => {
         const bias: TeamBias = {};
@@ -193,8 +202,8 @@ const RefBias: React.FC = () => {
                     const longTeamName = teamNameMapping[team] || team;
                     const teamWinLossData = yearWinLossData?.[longTeamName];
 
-                    const totalGames = teamWinLossData ? 
-                        (teamWinLossData.wins + teamWinLossData.losses + (teamWinLossData.ties || 0)) || 1 : 
+                    const totalGames = teamWinLossData ?
+                        (teamWinLossData.wins + teamWinLossData.losses + (teamWinLossData.ties || 0)) || 1 :
                         1;
 
                     const avgPenalties = yearBias[team].totalPenalties / totalGames;
@@ -216,7 +225,7 @@ const RefBias: React.FC = () => {
                         const yearWinLossData = refWinLossData[season.year.toString()].teamStats;
                         Object.keys(yearBias).forEach(team => {
                             const longTeamName = teamNameMapping[team] || team;
-                            console.log('Long team name:', longTeamName);
+                            // console.log('Long team name:', longTeamName);
                             if (yearWinLossData[longTeamName]) {
                                 yearBias[team].teamStats = {
                                     wins: yearWinLossData[longTeamName].wins,
@@ -345,7 +354,7 @@ const RefBias: React.FC = () => {
     const filteredRefs = Object.keys(refData).filter(refName =>
         refName.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    console.log('Filtered refs:', filteredRefs);
+    // console.log('Filtered refs:', filteredRefs);
 
     const allTeams = useMemo(() => {
         const teams = new Set<string>();
@@ -360,38 +369,51 @@ const RefBias: React.FC = () => {
         return Array.from(teams).sort();
     }, [refData]);
 
-
-    // "adrian-hill": {
-    //     "2021": {
-    //       "games": [
-    //         {
-    //           "homeTeam": "Cincinnati Bengals",
-    //           "awayTeam": "Minnesota Vikings",
-    //           "date": "09/12/2021",
-    //           "week": "1",
-    //           "winner": "Cincinnati Bengals",
-    //           "loser": "Minnesota Vikings",
-    //           "penaltyLog": [
-    //             {
-    //               "penalty": "False Start",
-    //               "team": "Minnesota",
-    //               "player": "C.Ham",
-    //               "quarter": "1",
-    //               "time": "15:00"
-    //             },
-    //             {
-    //               "penalty": "False Start",
-    //               "team": "Minnesota",
-    //               "player": "T.Conklin",
-    //               "quarter": "1",
-    //               "time": "14:25"
-    //             },
-    // console.log('Referee names in refereeStats:', Object.keys(refereeStats));
-    // console.log('Referee names in winLossStats:', Object.keys(winLossStats));
-
     useEffect(() => {
         // console.log('Referee data:', refData);
     }, [refData]);
+
+    interface PenaltyCount {
+        [penaltyType: string]: number;
+    }
+
+    const renderPenaltyGrid = (refName: string, team: string, isHome: boolean) => {
+        const penaltyCounts: PenaltyCount = {};
+        const refKey = refName.toLowerCase().replace(/\s+/g, '-');
+        console.log('Penalty data:', penaltyData[refKey]);
+    
+        Object.values(penaltyData[refKey] || {}).forEach(yearData => {
+            yearData.games.forEach(game => {
+                if ((isHome && getShortTeamName(game.homeTeam) === getShortTeamName(team)) || (!isHome && getShortTeamName(game.awayTeam) === getShortTeamName(team))) {
+                    game.penaltyLog.forEach(penalty => {
+                        if (getShortTeamName(penalty.team) === getShortTeamName(team)) {
+                            penaltyCounts[penalty.penalty] = (penaltyCounts[penalty.penalty] || 0) + 1;
+                        }
+                    });
+                }
+            });
+        });
+    
+        return (
+            <table className="penalty-grid">
+                <thead>
+                    <tr>
+                        <th>Penalty Type</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {Object.entries(penaltyCounts).sort((a, b) => b[1] - a[1]).map(([penaltyType, count]) => (
+                        <tr key={penaltyType}>
+                            <td>{penaltyType}</td>
+                            <td>{count}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        );
+    };
+    
 
     return (
         <div className="ref-bias-container">
@@ -486,6 +508,12 @@ const RefBias: React.FC = () => {
                                         ))}
                                     </tbody>
                                 </table>
+
+                                <h5>Home Penalties</h5>
+                                {renderPenaltyGrid(ref.name, team, true)}
+
+                                <h5>Away Penalties</h5>
+                                {renderPenaltyGrid(ref.name, team, false)}
                             </div>
                         ))}
                     </div>
