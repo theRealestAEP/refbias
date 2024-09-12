@@ -377,42 +377,42 @@ const RefBias: React.FC = () => {
         [penaltyType: string]: number;
     }
 
-    const renderPenaltyGrid = (refName: string, team: string, isHome: boolean) => {
-        const penaltyCounts: PenaltyCount = {};
-        const refKey = refName.toLowerCase().replace(/\s+/g, '-');
-        console.log('Penalty data:', penaltyData[refKey]);
+    // const renderPenaltyGrid = (refName: string, team: string, isHome: boolean) => {
+    //     const penaltyCounts: PenaltyCount = {};
+    //     const refKey = refName.toLowerCase().replace(/\s+/g, '-');
+    //     console.log('Penalty data:', penaltyData[refKey]);
     
-        Object.values(penaltyData[refKey] || {}).forEach(yearData => {
-            yearData.games.forEach(game => {
-                if ((isHome && getShortTeamName(game.homeTeam) === getShortTeamName(team)) || (!isHome && getShortTeamName(game.awayTeam) === getShortTeamName(team))) {
-                    game.penaltyLog.forEach(penalty => {
-                        if (getShortTeamName(penalty.team) === getShortTeamName(team)) {
-                            penaltyCounts[penalty.penalty] = (penaltyCounts[penalty.penalty] || 0) + 1;
-                        }
-                    });
-                }
-            });
-        });
+    //     Object.values(penaltyData[refKey] || {}).forEach(yearData => {
+    //         yearData.games.forEach(game => {
+    //             if ((isHome && getShortTeamName(game.homeTeam) === getShortTeamName(team)) || (!isHome && getShortTeamName(game.awayTeam) === getShortTeamName(team))) {
+    //                 game.penaltyLog.forEach(penalty => {
+    //                     if (getShortTeamName(penalty.team) === getShortTeamName(team)) {
+    //                         penaltyCounts[penalty.penalty] = (penaltyCounts[penalty.penalty] || 0) + 1;
+    //                     }
+    //                 });
+    //             }
+    //         });
+    //     });
     
-        return (
-            <table className="penalty-grid">
-                <thead>
-                    <tr>
-                        <th>Penalty Type</th>
-                        <th>Count</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {Object.entries(penaltyCounts).sort((a, b) => b[1] - a[1]).map(([penaltyType, count]) => (
-                        <tr key={penaltyType}>
-                            <td>{penaltyType}</td>
-                            <td>{count}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        );
-    };
+    //     return (
+    //         <table className="penalty-grid">
+    //             <thead>
+    //                 <tr>
+    //                     <th>Penalty Type</th>
+    //                     <th>Count</th>
+    //                 </tr>
+    //             </thead>
+    //             <tbody>
+    //                 {Object.entries(penaltyCounts).sort((a, b) => b[1] - a[1]).map(([penaltyType, count]) => (
+    //                     <tr key={penaltyType}>
+    //                         <td>{penaltyType}</td>
+    //                         <td>{count}</td>
+    //                     </tr>
+    //                 ))}
+    //             </tbody>
+    //         </table>
+    //     );
+    // };
     
 
     return (
@@ -509,11 +509,11 @@ const RefBias: React.FC = () => {
                                     </tbody>
                                 </table>
 
-                                <h5>Home Penalties</h5>
+                                {/* <h5>Home Penalties</h5>
                                 {renderPenaltyGrid(ref.name, team, true)}
 
                                 <h5>Away Penalties</h5>
-                                {renderPenaltyGrid(ref.name, team, false)}
+                                {renderPenaltyGrid(ref.name, team, false)} */}
                             </div>
                         ))}
                     </div>
